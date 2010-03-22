@@ -1,0 +1,13 @@
+I thought one day to play with Prosody (http://prosody.im/).
+
+But I wanted to keep its install separate.
+
+Here's the Makefile that appears to do this, at least on my system.
+
+At the moment it will install Prosody 0.6.1 and the minimum required libs.
+
+Let me know (ayourtch@gmail.com) if it was of any use for you or
+if it somehow did not work. No guarantees whatsoever (I "license" this makefile same way as Prosody itself is licensed - http://prosody.im/source/mit) - but
+I'll see if I can help.
+
+
