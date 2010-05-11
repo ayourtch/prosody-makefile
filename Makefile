@@ -1,5 +1,5 @@
 # Edit the bext line to be your install directory
-INSTALL_DIR_NO_TRAILER=/tmp/prosody-test-install
+INSTALL_DIR_NO_TRAILER=/home/dalien/prosody/prosody-install
 
 INSTALL_DIR=$(INSTALL_DIR_NO_TRAILER)/
 INSTALL_DIR_ESCAPED=`(echo $(INSTALL_DIR) | sed -e 's/\\//\\\\\\//g')`
@@ -18,7 +18,7 @@ LUASEC_TGZ=luasec-0.3.3.tar.gz
 LUASOCKET_TGZ=luasocket-2.0.2.tar.gz
 
 LUAFILESYSTEM_URL=http://github.com/keplerproject/luafilesystem/tarball/v1.5.0
-LUAFILESYSTEM_TGZ=keplerproject-luafilesystem-8ff2013.tar.gz
+LUAFILESYSTEM_TGZ=keplerproject-luafilesystem-*.tar.gz
 
 all: tarballs tmpdir build
 
@@ -37,6 +37,8 @@ lua-build: $(LUA_TGZ) tmpdir
 	(cd tmp; REAL_ROOT=$(INSTALL_DIR_ESCAPED); EDIT_CMD="s#\(LUA_ROOT\s\"\)\/usr\/local\/\(\"\)#\1$$REAL_ROOT\2#g"; cd lua-*/src; sed -i.bak -e $$EDIT_CMD luaconf.h)
 	# fix the install path in Makefile
 	(cd tmp; REAL_ROOT=$(INSTALL_DIR_ESCAPED); EDIT_CMD="s#\(INSTALL_TOP=\s\)\/usr\/local#\1$$REAL_ROOT#g"; cd lua-*; sed -i.bak -e $$EDIT_CMD Makefile)
+	# fix the cflags to add -fPIC in src/Makefile
+	(cd tmp; EDIT_CMD="s#\(^CFLAGS=\)#\1-fPIC#g"; cd lua-*/src; sed -i.bak -e $$EDIT_CMD Makefile)
 	# build and install
 	(cd tmp; cd lua-*; make $(LUA_TARGET); make install)
 
@@ -49,7 +51,7 @@ prosody-build: $(PROSODY_TGZ) tmpdir
 luaexpat-build: $(LUAEXPAT_TGZ) tmpdir
 	(cd tmp; tar xzvf ../$(LUAEXPAT_TGZ))
 	# patch the config
-	(cd tmp; REAL_ROOT=$(INSTALL_DIR_ESCAPED); EDIT_CMD1="s#\(LUA_LIBDIR=\s\)#\1$${REAL_ROOT}lib\/lua\/5.1\n\##g"; EDIT_CMD2="s#\(LUA_DIR=\s\)#\1$${REAL_ROOT}share\/lua\/5.1\n\##g";  EDIT_CMD3="s#\(LUA_INC=\s\)#\1$${REAL_ROOT}include\n\##g"; EDIT_CMD4="s#\(LUA_VERSION_NUM=\s\)#\1$(LUA_VERSION_NUM)\n\##g"; cd luaexpat-*; sed -i.bak -e $$EDIT_CMD1 -e $$EDIT_CMD2 -e $$EDIT_CMD3 -e $$EDIT_CMD4 config)
+	(cd tmp; REAL_ROOT=$(INSTALL_DIR_ESCAPED); EDIT_CMD1="s#\(LUA_LIBDIR=\s\)#\1$${REAL_ROOT}lib\/lua\/5.1\n\##g"; EDIT_CMD2="s#\(LUA_DIR=\s\)#\1$${REAL_ROOT}share\/lua\/5.1\n\##g";  EDIT_CMD3="s#\(LUA_INC=\s\)#\1$${REAL_ROOT}include\n\##g"; EDIT_CMD4="s#\(LUA_VERSION_NUM=\s\)#\1$(LUA_VERSION_NUM)\n\##g"; EDIT_CMD5="s#\(CFLAGS\s=\)#\1-fPIC#g"; cd luaexpat-*; sed -i.bak -e $$EDIT_CMD1 -e $$EDIT_CMD2 -e $$EDIT_CMD3 -e $$EDIT_CMD4 -e $$EDIT_CMD5 config)
 	# compile
 	(cd tmp; cd luaexpat-*; make; make install)
 
