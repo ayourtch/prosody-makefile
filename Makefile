@@ -1,5 +1,5 @@
 # Edit the bext line to be your install directory
-INSTALL_DIR_NO_TRAILER=/home/dalien/prosody/prosody-install
+INSTALL_DIR_NO_TRAILER=/tmp/prosody-install
 
 INSTALL_DIR=$(INSTALL_DIR_NO_TRAILER)/
 INSTALL_DIR_ESCAPED=`(echo $(INSTALL_DIR) | sed -e 's/\\//\\\\\\//g')`
